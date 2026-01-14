@@ -1,0 +1,220 @@
+:root {
+  font-family: "Inter", system-ui, sans-serif;
+  color: #101418;
+  background: #f7f7fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  padding: 16px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.app__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+h1 {
+  margin: 0;
+}
+
+.muted {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.streak {
+  text-align: right;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(16, 20, 24, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tabs button {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-weight: 600;
+}
+
+.tabs button.active {
+  background: #101418;
+  color: #fff;
+}
+
+.card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(16, 20, 24, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prompt div {
+  margin-bottom: 6px;
+}
+
+.progress {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress button,
+.ai button,
+.finish button,
+.library-actions button,
+.card button {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  background: #101418;
+  color: #fff;
+  font-weight: 600;
+}
+
+.soft-skip {
+  background: #f3f4f6;
+  color: #101418;
+  border: 1px solid #e5e7eb;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.push ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.stats {
+  display: flex;
+  gap: 12px;
+  font-size: 0.9rem;
+}
+
+.ai {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ai-results,
+.ai-diff {
+  background: #f3f4f6;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.finish {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.favorite-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.favorite-lines button {
+  background: #f3f4f6;
+  color: #101418;
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.finish input,
+.card input,
+.card select {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  width: 100%;
+}
+
+.library {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.library-item {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.library-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.compliment {
+  background: #fff6e7;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+@media (max-width: 600px) {
+  .tabs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .library-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

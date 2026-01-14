@@ -1,0 +1,15 @@
+{
+  "name": "tg-rhymes",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm --workspace apps/webapp run dev",
+    "dev:server": "npm --workspace apps/server run dev",
+    "dev:bot": "npm --workspace apps/bot run dev",
+    "build": "npm --workspaces run build",
+    "lint": "npm --workspaces run lint"
+  }
+}
