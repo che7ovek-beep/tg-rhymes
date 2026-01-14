@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id
+  createdAt        DateTime @default(now())
+  timezone         String
+  language         String
+  dailyGoalLines   Int
+  timerEnabled     Boolean
+  reminderTime     String
+  reminderDays     String
+  remindersEnabled Boolean
+  softSkipUsedAt   DateTime?
+  entries          Entry[]
+}
+
+model Entry {
+  id           String   @id @default(cuid())
+  userId       String
+  date         String
+  text         String
+  form         String
+  mood         String
+  tags         String
+  favoriteLine String?
+  status       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
+}
+
+model Prompt {
+  date       String  @id
+  theme      String
+  emotion    String
+  form       String
+  constraint String
+  createdAt  DateTime @default(now())
+}

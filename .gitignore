@@ -1,0 +1,11 @@
+node_modules
+.env
+.env.local
+.dist
+.DS_Store
+apps/server/prisma/dev.db
+apps/server/prisma/dev.db-journal
+apps/server/prisma/migrations
+apps/webapp/dist
+apps/server/dist
+apps/bot/dist
