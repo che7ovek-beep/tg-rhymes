@@ -2,14 +2,14 @@
   "name": "tg-rhymes",
   "private": true,
   "workspaces": [
-    "apps/bot-node",
-    "apps/bot-worker",
-    "apps/webapp",
+    "apps/*",
     "packages/*"
   ],
   "scripts": {
     "dev:web": "npm --workspace apps/webapp run dev",
-    "dev:bot": "npm --workspace apps/bot-node run dev",
+    "dev:server": "npm --workspace apps/server run dev",
+    "dev:bot": "npm --workspace apps/bot run dev",
+    "dev:bot-node": "npm --workspace apps/bot-node run dev",
     "dev:worker": "npm --workspace apps/bot-worker run dev",
     "build": "npm --workspaces run build",
     "lint": "npm --workspaces run lint"

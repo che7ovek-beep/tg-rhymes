@@ -12,3 +12,8 @@ apps/api-laravel/bootstrap/cache
 apps/api-laravel/.env
 apps/api-laravel/.env.local
 apps/api-laravel/database/*.sqlite
+apps/server/prisma/dev.db
+apps/server/prisma/dev.db-journal
+apps/server/prisma/migrations
+apps/server/dist
+apps/bot/dist
