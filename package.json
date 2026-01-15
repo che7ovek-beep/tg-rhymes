@@ -7,8 +7,6 @@
   ],
   "scripts": {
     "dev:web": "npm --workspace apps/webapp run dev",
-    "dev:server": "npm --workspace apps/server run dev",
-    "dev:bot": "npm --workspace apps/bot run dev",
     "dev:bot-node": "npm --workspace apps/bot-node run dev",
     "dev:worker": "npm --workspace apps/bot-worker run dev",
     "build": "npm --workspaces run build",
