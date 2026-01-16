@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { apiFetch } from "./lib/api";
-import { countLines, countWords, estimateSyllables, extractRhymeHints } from "./lib/text";
+import { countLines, countWords, estimateSyllables } from "./lib/text";
 import { entryForms } from "@daily-verse/shared";
 
 const starterLines = [
@@ -43,10 +43,10 @@ type EntrySummary = {
 type SettingsPayload = {
   dailyGoalLines: number;
   timerEnabled: boolean;
-  language: "ru" | "en";
+  timezone: string;
+  remindersEnabled: boolean;
   reminderTime: string;
   reminderDays: number[];
-  timezone: string;
 };
 
 const useDebounce = (value: string, delay = 1500): string => {
@@ -64,8 +64,6 @@ const App: React.FC = () => {
   const [text, setText] = useState("");
   const [form, setForm] = useState(entryForms[0]);
   const [promptLines, setPromptLines] = useState<string[]>([]);
-  const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
-  const [aiDiff, setAiDiff] = useState<{ before: string; after: string } | null>(null);
   const [compliment, setCompliment] = useState<string | null>(null);
   const [favoriteLine, setFavoriteLine] = useState("");
   const [entries, setEntries] = useState<EntrySummary[]>([]);
@@ -73,12 +71,11 @@ const App: React.FC = () => {
   const [settings, setSettings] = useState<SettingsPayload>({
     dailyGoalLines: 4,
     timerEnabled: true,
-    language: "ru",
+    timezone: "Europe/Moscow",
+    remindersEnabled: true,
     reminderTime: "18:00",
-    reminderDays: [1, 2, 3, 4, 5, 6, 0],
-    timezone: "Europe/Moscow"
+    reminderDays: [1, 2, 3, 4, 5, 6, 0]
   });
-  const [streak, setStreak] = useState({ current: 0, best: 0 });
   const [timerOn, setTimerOn] = useState(false);
   const [timerLeft, setTimerLeft] = useState(600);
 
@@ -93,13 +90,10 @@ const App: React.FC = () => {
   };
 
   const loadEntries = async (query = "") => {
-    const data = await apiFetch<EntrySummary[]>(`/api/entries${query ? `?q=${encodeURIComponent(query)}` : ""}`);
+    const data = await apiFetch<EntrySummary[]>(
+      `/api/entries${query ? `?q=${encodeURIComponent(query)}` : ""}`
+    );
     setEntries(data);
-  };
-
-  const loadStreak = async () => {
-    const data = await apiFetch<{ current: number; best: number }>("/api/streak");
-    setStreak(data);
   };
 
   const loadSettings = async () => {
@@ -112,10 +106,9 @@ const App: React.FC = () => {
     window.Telegram?.WebApp?.expand?.();
 
     const init = async () => {
-      await apiFetch("/api/auth/verify", { method: "POST" });
+      await apiFetch("/api/webapp/auth/verify", { method: "POST" });
       await loadToday();
       await loadEntries();
-      await loadStreak();
       await loadSettings();
     };
     init();
@@ -149,7 +142,6 @@ const App: React.FC = () => {
   const lineCount = useMemo(() => countLines(text), [text]);
   const wordCount = useMemo(() => countWords(text), [text]);
   const syllables = useMemo(() => estimateSyllables(text), [text]);
-  const rhymeHints = useMemo(() => extractRhymeHints(text), [text]);
 
   const handleStart = () => {
     setView("editor");
@@ -182,16 +174,6 @@ const App: React.FC = () => {
     setView("today");
     await loadToday();
     await loadEntries();
-    await loadStreak();
-  };
-
-  const handleAI = async (path: string) => {
-    const data = await apiFetch<{ items: string[]; diff?: { before: string; after: string } }>(path, {
-      method: "POST",
-      body: JSON.stringify({ text })
-    });
-    setAiSuggestions(data.items);
-    setAiDiff(data.diff || null);
   };
 
   const handleSettingsSave = async () => {
@@ -218,10 +200,6 @@ const App: React.FC = () => {
         <div>
           <h1>Daily Verse</h1>
           <p className="muted">Сегодня 4 строки — уже победа.</p>
-        </div>
-        <div className="streak">
-          <span>Стрик {streak.current}</span>
-          <span className="muted">Лучший {streak.best}</span>
         </div>
       </header>
 
@@ -287,23 +265,6 @@ const App: React.FC = () => {
             )}
           </div>
 
-          <button
-            className="soft-skip"
-            onClick={async () => {
-              const response = await apiFetch<{ ok: boolean; reason?: string }>(
-                "/api/soft-skip",
-                { method: "POST" }
-              );
-              if (!response.ok) {
-                setCompliment("Мягкий пропуск уже использован на этой неделе.");
-              } else {
-                setCompliment("День тяжелый — мы сохранили ритм. Завтра продолжим.");
-              }
-            }}
-          >
-            День тяжелый
-          </button>
-
           {compliment && <div className="compliment">{compliment}</div>}
         </section>
       )}
@@ -334,38 +295,6 @@ const App: React.FC = () => {
             <span>Слова: {wordCount}</span>
             <span>Слоги: {syllables}</span>
           </div>
-
-          {rhymeHints.length > 0 && (
-            <div className="rhyme-hints">
-              <strong>Схожие окончания:</strong>
-              <ul>
-                {rhymeHints.map((hint) => (
-                  <li key={hint}>{hint}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <div className="ai">
-            <button onClick={() => handleAI("/api/ai/continue")}>Продолжи мысль</button>
-            <button onClick={() => handleAI("/api/ai/rhymes")}>Рифмы</button>
-            <button onClick={() => handleAI("/api/ai/soft-edit")}>Мягкая правка</button>
-          </div>
-
-          {aiSuggestions.length > 0 && (
-            <div className="ai-results">
-              {aiSuggestions.map((item) => (
-                <div key={item}>{item}</div>
-              ))}
-            </div>
-          )}
-
-          {aiDiff && (
-            <div className="ai-diff">
-              <div><strong>До:</strong> {aiDiff.before}</div>
-              <div><strong>После:</strong> {aiDiff.after}</div>
-            </div>
-          )}
 
           <div className="finish">
             <label>Любимая строка</label>
@@ -445,14 +374,21 @@ const App: React.FC = () => {
             />
           </div>
           <div className="form-row">
-            <label>Язык</label>
-            <select
-              value={settings.language}
-              onChange={(event) => setSettings((prev) => ({ ...prev, language: event.target.value as "ru" | "en" }))}
-            >
-              <option value="ru">Русский</option>
-              <option value="en">English</option>
-            </select>
+            <label>Таймзона</label>
+            <input
+              value={settings.timezone}
+              onChange={(event) => setSettings((prev) => ({ ...prev, timezone: event.target.value }))}
+            />
+          </div>
+          <div className="form-row">
+            <label>Напоминания</label>
+            <input
+              type="checkbox"
+              checked={settings.remindersEnabled}
+              onChange={() =>
+                setSettings((prev) => ({ ...prev, remindersEnabled: !prev.remindersEnabled }))
+              }
+            />
           </div>
           <div className="form-row">
             <label>Время напоминаний</label>
@@ -477,13 +413,6 @@ const App: React.FC = () => {
               }
             />
             <span className="muted">0-Вс, 1-Пн ... 6-Сб</span>
-          </div>
-          <div className="form-row">
-            <label>Таймзона</label>
-            <input
-              value={settings.timezone}
-              onChange={(event) => setSettings((prev) => ({ ...prev, timezone: event.target.value }))}
-            />
           </div>
           <button onClick={handleSettingsSave}>Сохранить</button>
         </section>

@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./apps/api-laravel
+    env_file:
+      - ./apps/api-laravel/.env.example
+    depends_on:
+      - db
+    volumes:
+      - ./apps/api-laravel:/var/www/html
+
+  nginx:
+    image: nginx:stable
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+    volumes:
+      - ./apps/api-laravel:/var/www/html
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+
+  webapp:
+    build:
+      context: ./apps/webapp
+    env_file:
+      - ./apps/webapp/.env.example
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./apps/webapp:/app
+
+  bot-node:
+    build:
+      context: ./apps/bot-node
+    env_file:
+      - ./apps/bot-node/.env.example
+    depends_on:
+      - api
+
+  bot-worker:
+    build:
+      context: ./apps/bot-worker
+    env_file:
+      - ./apps/bot-worker/.env.example
+    depends_on:
+      - api
+
+volumes:
+  db_data:
