@@ -1,0 +1,74 @@
+name: Deploy on tag (folder + systemd)
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+      - '*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      HEALTHCHECK_URL: ${{ secrets.HEALTHCHECK_URL }}
+      SYSTEMD_SERVICE: ${{ secrets.SYSTEMD_SERVICE }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set tag
+        run: echo "TAG=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
+
+      - name: Prepare SSH
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          SSH_PORT="${SSH_PORT:-22}"
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync release to server
+        run: |
+          set -euo pipefail
+          SSH_PORT="${SSH_PORT:-22}"
+          RELEASE_DIR="$DEPLOY_PATH/releases/$TAG"
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p '$RELEASE_DIR'"
+          rsync -az --delete \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'node_modules' \
+            --exclude 'vendor' \
+            -e "ssh -p $SSH_PORT" \
+            ./apps/api-laravel/ "$SSH_USER@$SSH_HOST:$RELEASE_DIR/"
+
+      - name: Deploy on server
+        run: |
+          set -euo pipefail
+          SSH_PORT="${SSH_PORT:-22}"
+          ssh -p "$SSH_PORT" \
+            "$SSH_USER@$SSH_HOST" \
+            "TAG='$TAG' DEPLOY_PATH='$DEPLOY_PATH' HEALTHCHECK_URL='$HEALTHCHECK_URL' SYSTEMD_SERVICE='${SYSTEMD_SERVICE:-app.service}' bash -s" <<'EOF'
+          set -euo pipefail
+          RELEASE_DIR="$DEPLOY_PATH/releases/$TAG"
+          CURRENT_LINK="$DEPLOY_PATH/current"
+          SYSTEMD_SERVICE="${SYSTEMD_SERVICE:-app.service}"
+
+          ln -sfn "$DEPLOY_PATH/shared/.env" "$RELEASE_DIR/.env"
+          ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
+          cd "$CURRENT_LINK"
+
+          composer install --no-dev --optimize-autoloader
+          php artisan migrate --force
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+          sudo systemctl restart "$SYSTEMD_SERVICE"
+          curl -fsS "$HEALTHCHECK_URL" > /dev/null
+          EOF
