@@ -3,9 +3,12 @@ node_modules
 .env.local
 .dist
 .DS_Store
-apps/server/prisma/dev.db
-apps/server/prisma/dev.db-journal
-apps/server/prisma/migrations
 apps/webapp/dist
-apps/server/dist
-apps/bot/dist
+apps/bot-node/dist
+apps/bot-worker/dist
+apps/api-laravel/vendor
+apps/api-laravel/storage
+apps/api-laravel/bootstrap/cache
+apps/api-laravel/.env
+apps/api-laravel/.env.local
+apps/api-laravel/database/*.sqlite

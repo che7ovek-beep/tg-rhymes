@@ -36,16 +36,6 @@ h1 {
   font-size: 0.85rem;
 }
 
-.streak {
-  text-align: right;
-  background: #fff;
-  padding: 8px 12px;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(16, 20, 24, 0.08);
-  display: flex;
-  flex-direction: column;
-}
-
 .tabs {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -88,7 +78,6 @@ h1 {
 }
 
 .progress button,
-.ai button,
 .finish button,
 .library-actions button,
 .card button {
@@ -98,12 +87,6 @@ h1 {
   background: #101418;
   color: #fff;
   font-weight: 600;
-}
-
-.soft-skip {
-  background: #f3f4f6;
-  color: #101418;
-  border: 1px solid #e5e7eb;
 }
 
 .timer {
@@ -130,19 +113,6 @@ textarea {
   display: flex;
   gap: 12px;
   font-size: 0.9rem;
-}
-
-.ai {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.ai-results,
-.ai-diff {
-  background: #f3f4f6;
-  padding: 12px;
-  border-radius: 12px;
 }
 
 .finish {
