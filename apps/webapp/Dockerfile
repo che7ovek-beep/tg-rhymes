@@ -1,8 +1,9 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN npm install || true
-COPY . .
+COPY apps/webapp/package.json apps/webapp/package-lock.json ./
+COPY packages/shared /packages/shared
+RUN npm ci
+COPY apps/webapp ./
 
-CMD ["npm", "run", "dev", "--", "--host"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
