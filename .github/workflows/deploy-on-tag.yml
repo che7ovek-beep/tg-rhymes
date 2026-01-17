@@ -60,6 +60,10 @@ jobs:
           LARAVEL_SERVICE="${LARAVEL_SERVICE:-api}"
 
           ln -sfn "$DEPLOY_PATH/shared/.env" "$RELEASE_DIR/.env"
+          ln -sfn "$DEPLOY_PATH/shared/apps/api-laravel/.env" "$RELEASE_DIR/.env"
+          ln -sfn "$DEPLOY_PATH/shared/apps/bot-node/.env" "$RELEASE_DIR/.env"
+          ln -sfn "$DEPLOY_PATH/shared/apps/bot-worker/.env" "$RELEASE_DIR/.env"
+          ln -sfn "$DEPLOY_PATH/shared/apps/webapp/.env" "$RELEASE_DIR/.env"
           ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
           cd "$CURRENT_LINK"
 

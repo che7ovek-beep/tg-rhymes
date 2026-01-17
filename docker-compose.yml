@@ -16,7 +16,7 @@ services:
     build:
       context: ./apps/api-laravel
     env_file:
-      - ./apps/api-laravel/.env.example
+      - ./apps/api-laravel/.env
     depends_on:
       - db
     volumes:
@@ -36,7 +36,7 @@ services:
     build:
       context: ./apps/webapp
     env_file:
-      - ./apps/webapp/.env.example
+      - ./apps/webapp/.env
     ports:
       - "5173:5173"
     volumes:
@@ -46,7 +46,7 @@ services:
     build:
       context: ./apps/bot-node
     env_file:
-      - ./apps/bot-node/.env.example
+      - ./apps/bot-node/.env
     depends_on:
       - api
 
@@ -54,7 +54,7 @@ services:
     build:
       context: ./apps/bot-worker
     env_file:
-      - ./apps/bot-worker/.env.example
+      - ./apps/bot-worker/.env
     depends_on:
       - api
 
