@@ -1,23 +1,21 @@
 {
   "name": "@daily-verse/webapp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -p tsconfig.json && vite build",
-    "preview": "vite preview",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
     "lint": "echo 'no lint configured'"
   },
   "dependencies": {
-    "@daily-verse/shared": "*",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@astrojs/svelte": "^7.2.5",
+    "@daily-verse/shared": "file:../../packages/shared",
+    "astro": "^5.16.11",
+    "svelte": "^5.1.16"
   },
   "devDependencies": {
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "typescript": "^5.4.5",
-    "vite": "^5.3.1"
+    "typescript": "^5.4.5"
   }
 }
