@@ -6,9 +6,9 @@ RUN apt-get update && apt-get install -y git unzip libpq-dev \
 WORKDIR /var/www/html
 
 COPY composer.json composer.lock* ./
+COPY . .
+
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer install --no-interaction --no-scripts || true
-
-COPY . .
 
 CMD ["php-fpm"]
