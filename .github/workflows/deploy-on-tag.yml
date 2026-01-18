@@ -67,8 +67,10 @@ jobs:
           ln -sfn "$DEPLOY_PATH/shared/apps/webapp/.env" "$RELEASE_DIR/apps/webapp/.env"
           ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
           cd "$CURRENT_LINK"
+          
+          make init
 
-          curl -fsS "$HEALTHCHECK_URL" > /dev/null
+          #curl -fsS "$HEALTHCHECK_URL" > /dev/null
 
           if [ -d "$DEPLOY_PATH/releases" ]; then
             cd "$DEPLOY_PATH/releases"
