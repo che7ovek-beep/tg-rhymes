@@ -70,10 +70,11 @@ jobs:
           docker compose pull --quiet || true
           docker compose up -d --build
 
-          docker compose exec -T "$LARAVEL_SERVICE" php artisan migrate --force
-          docker compose exec -T "$LARAVEL_SERVICE" php artisan config:cache
-          docker compose exec -T "$LARAVEL_SERVICE" php artisan route:cache
-          docker compose exec -T "$LARAVEL_SERVICE" php artisan view:cache
+          docker exec "$LARAVEL_SERVICE" chown -R www-data:www-data .
+          docker exec "$LARAVEL_SERVICE" php artisan migrate --force
+          docker exec "$LARAVEL_SERVICE" php artisan config:cache
+          docker exec "$LARAVEL_SERVICE" php artisan route:cache
+          docker exec "$LARAVEL_SERVICE" php artisan view:cache
 
           curl -fsS "$HEALTHCHECK_URL" > /dev/null
 
