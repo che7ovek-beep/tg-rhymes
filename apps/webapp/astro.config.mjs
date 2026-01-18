@@ -13,6 +13,11 @@ export default defineConfig({
       alias: {
         "@daily-verse/shared": sharedEntry
       }
+    },
+    server: {
+      allowedHosts: [
+        import.meta.env.VITE_APP_URL
+      ]
     }
   }
 });

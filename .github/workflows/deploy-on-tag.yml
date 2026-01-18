@@ -60,21 +60,13 @@ jobs:
           LARAVEL_SERVICE="${LARAVEL_SERVICE:-api}"
 
           ln -sfn "$DEPLOY_PATH/shared/.env" "$RELEASE_DIR/.env"
+          ln -sfn "$DEPLOY_PATH/shared/Makefile" "$RELEASE_DIR/Makefile"
           ln -sfn "$DEPLOY_PATH/shared/apps/api-laravel/.env" "$RELEASE_DIR/apps/api-laravel/.env"
           ln -sfn "$DEPLOY_PATH/shared/apps/bot-node/.env" "$RELEASE_DIR/apps/bot-node/.env"
           ln -sfn "$DEPLOY_PATH/shared/apps/bot-worker/.env" "$RELEASE_DIR/apps/bot-worker/.env"
           ln -sfn "$DEPLOY_PATH/shared/apps/webapp/.env" "$RELEASE_DIR/apps/webapp/.env"
           ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
           cd "$CURRENT_LINK"
-
-          docker compose pull --quiet || true
-          docker compose up -d --build
-
-          docker exec "$LARAVEL_SERVICE" chown -R www-data:www-data .
-          docker exec "$LARAVEL_SERVICE" php artisan migrate --force
-          docker exec "$LARAVEL_SERVICE" php artisan config:cache
-          docker exec "$LARAVEL_SERVICE" php artisan route:cache
-          docker exec "$LARAVEL_SERVICE" php artisan view:cache
 
           curl -fsS "$HEALTHCHECK_URL" > /dev/null
 
