@@ -184,12 +184,5 @@ $prompts = [
 ];
 
 return [
-    'items' => $prompts,
-    'pick' => function (string $date) use ($prompts): array {
-        $parts = array_map('intval', explode('-', $date));
-        $seed = array_sum($parts);
-        $index = $seed % count($prompts);
-        $prompt = $prompts[$index];
-        return array_merge(['date' => $date], $prompt);
-    }
+    'items' => $prompts
 ];

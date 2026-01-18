@@ -5,6 +5,7 @@ use App\Models\Entry;
 use App\Models\Prompt;
 use App\Models\ReminderLog;
 use App\Models\User;
+use App\Services\PromptPicker;
 use App\Services\TelegramInitDataVerifier;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -56,9 +57,10 @@ Route::middleware('webapp.init')->group(function () {
         $record = User::where('telegram_id', $user['id'])->firstOrFail();
 
         $today = Carbon::now($record->timezone)->format('Y-m-d');
+        $picker = app(PromptPicker::class);
         $prompt = Prompt::firstOrCreate(
             ['date' => $today],
-            config('prompts.pick')($today)
+            $picker->pick($today)
         );
 
         $entry = Entry::where('user_telegram_id', $record->telegram_id)
